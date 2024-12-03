@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validasi & Tabel Data</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/just-validate@3.5.0/dist/just-validate.production.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #f9f9f9;
+        }
+
+        form {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .is-invalid {
+            border-color: red;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-top: -8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="dataForm">
+        <div>
+            <input type="text" name="nik" class="nik" placeholder="Masukkan NIK">
+            <p class="error nik--error"></p>
+        </div>
+        <div>
+            <input type="text" name="name" class="name" placeholder="Masukkan Nama">
+            <p class="error nama--error"></p>
+        </div>
+        <button type="submit">Simpan</button>
+    </form>
+
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>NIK</th>
+                <th>Nama</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>06650053</td>
+                <td>Sunu Pinasthika Fajar</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Inisialisasi validasi
+        const validation = new JustValidate('#dataForm', {
+            errorFieldCssClass: 'is-invalid',
+            errorLabelStyle: {
+                color: 'red',
+                fontSize: '12px',
+            }
+        });
+
+        // Tambahkan aturan validasi
+        validation
+            .addField('.nik', [
+                {
+                    rule: 'required',
+                    errorMessage: 'NIK harus diisi',
+                },
+                {
+                    rule: 'minLength',
+                    value: 8,
+                    errorMessage: 'NIK minimal 8 karakter',
+                },
+                {
+                    rule: 'maxLength',
+                    value: 16,
+                    errorMessage: 'NIK maksimal 16 karakter',
+                },
+                {
+                    rule: 'number',
+                    errorMessage: 'NIK harus berupa angka',
+                },
+            ])
+            .addField('.name', [
+                {
+                    rule: 'required',
+                    errorMessage: 'Nama harus diisi',
+                },
+                {
+                    rule: 'minLength',
+                    value: 3,
+                    errorMessage: 'Nama minimal 3 karakter',
+                }
+            ])
+            .onSuccess((event) => {
+                // Mencegah form refresh halaman
+                event.preventDefault();
+
+                // Ambil nilai dari input
+                const nik = document.querySelector('.nik').value;
+                const name = document.querySelector('.name').value;
+
+                // Tambahkan data ke tabel
+                addToTable(nik, name);
+
+                // Bersihkan input setelah submit
+                document.querySelector('.nik').value = '';
+                document.querySelector('.name').value = '';
+            });
+
+        // Fungsi untuk menambahkan data ke tabel
+        function addToTable(nik, name) {
+            const table = document.querySelector('#dataTable tbody');
+            const rowCount = table.rows.length + 1;
+            
+            const row = table.insertRow(); // Buat baris baru
+
+            // Tambahkan sel ke baris baru
+            const cell1 = row.insertCell(0);
+            const cell2 = row.insertCell(1);
+            const cell3 = row.insertCell(2);
+
+            // Isi sel dengan data
+            cell1.textContent = rowCount;
+            cell2.textContent = nik;
+            cell3.textContent = name;
+        }
+    </script>
+
+</body>
+</html>
